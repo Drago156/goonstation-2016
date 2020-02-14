@@ -930,3 +930,65 @@ datum
 
 			reaction_temperature(exposed_temperature, exposed_volume)
 				bang()
+				
+				
+				
+		combustible/sea4
+			name = "Sea4"
+			id = "sea4"
+			description = "dunno yet"
+			reagent_state = SOLID
+			fluid_r = 0
+			fluid_g = 0
+			fluid_b = 0
+			volatility = 2.5
+			transparency = 255
+			depletion_rate = 0.05
+			penetrates_skin = 1 // think of it as just being all over them i guess
+
+			reaction_temperature(exposed_temperature, exposed_volume)
+				if(src.reacting)
+					return
+				if(exposed_temperature > T0C + 200)
+					src.reacting = 1
+					var/location = get_turf(holder.my_atom)
+					var/our_amt = holder.get_reagent_amount(src.id)
+					var/datum/effects/system/spark_spread/s = unpool(/datum/effects/system/spark_spread)
+					s.set_up(2, 1, location)
+					s.start()
+					spawn(rand(5,15))
+						if(!holder || !holder.my_atom) return // runtime error fix
+						switch(our_amt)
+							if(0 to 40)
+								holder.my_atom.visible_message("<b>The sea4 ignites!</b>")
+								var/datum/effects/system/bad_smoke_spread/smoke = new /datum/effects/system/bad_smoke_spread()
+								smoke.set_up(1, 0, location)
+								smoke.start()
+								explosion(holder.my_atom, location, -1, -1, pick(0,1), 1)
+								holder.del_reagent(id)
+							if(41 to 70)
+								holder.my_atom.visible_message("<b>[holder.my_atom] flares up!</b>")
+								fireflash(location,0)
+								explosion(holder.my_atom, location, -1, -1, 1, 2)
+								holder.del_reagent(id)
+							if(71 to INFINITY)
+								holder.my_atom.visible_message("<span style=\"color:red\"><b>[holder.my_atom] explodes!</b></span>")
+								explosion(holder.my_atom, location, -1, 1, 2, 3)
+								holder.del_reagent(id) 
+				return
+
+			reaction_obj(var/obj/O, var/volume)
+				src = null
+				return
+
+			reaction_turf(var/turf/T, var/volume)
+				src = null
+				if(!istype(T, /turf/space))
+					if(volume >= 5)
+						if(!locate(/obj/decal/cleanable/dirt) in T)
+							var/obj/decal/cleanable/dirt/D = new /obj/decal/cleanable/dirt(T)
+							D.name = "Sea4"
+							D.desc = "Uh oh. Someone better clean this up!"
+							if(!D.reagents) D.create_reagents(10)
+							D.reagents.add_reagent("sea4", 5, null)
+                                return
