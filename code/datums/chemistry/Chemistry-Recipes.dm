@@ -2704,4 +2704,13 @@ datum
 			result_amount = 1
 			mix_phrase = ".ylegnarts dnuora lriws ot snigeb erutxim ehT"
 			mix_sound = 'sound/misc/drinkfizz.ogg'
+			
+		Sea4
+		        name = "Sea4"
+			id = "sea4"
+			result = "sea4"
+			required_reagents = list("carbon" = 1, "water" = 1)
+			instant = 0
+			mix_phrase = "dunno yet"
+			mix_sound = 'sound/misc/fuse.ogg'
 #undef get_fucked_clarks
