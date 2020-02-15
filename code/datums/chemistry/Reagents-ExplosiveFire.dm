@@ -975,6 +975,16 @@ datum
 								holder.my_atom.visible_message("<span style=\"color:red\"><b>[holder.my_atom] explodes!</b></span>")
 								explosion(holder.my_atom, location, -1, 1, 2, 3)
 								holder.del_reagent(id) 
+					
+				       var/turf/T = get_turf(holder.my_atom)
+                                       if (T)
+                                           playsound(T, "sound/weapons/flashbang.ogg", 25, 1)
+                                           new seabee(T)
+                                           for (var/i = 1; i<= 8; i= i*2)
+                                               if (istype(get_turf(get_step(T,i)),/turf/simulated/floor))
+                                                   new seabee(get_step(T,i))
+                                               else
+                                                   new seabee(T)
 				return
 
 			reaction_obj(var/obj/O, var/volume)
